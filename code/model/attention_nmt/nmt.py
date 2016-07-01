@@ -496,15 +496,27 @@ def init_params(options):
     params['Wemb'] = norm_weight(options['n_words_src'], options['dim_word'])
     params['Wemb_dec'] = norm_weight(options['n_words'], options['dim_word'])
 
+    num_layers=3
     # encoder: bidirectional RNN
     params = get_layer(options['encoder'])[0](options, params,
-                                              prefix='encoder',
+                                              prefix='encoder_1',
                                               nin=options['dim_word'],
                                               dim=options['dim'])
+    for i in range(1,num_layers):
+        params = get_layer(options['encoder'])[0](options, params,
+                                                  prefix='encoder_'+str(i+1),
+                                                  nin=options['dim'],
+                                                  dim=options['dim'])
+
     params = get_layer(options['encoder'])[0](options, params,
-                                              prefix='encoder_r',
+                                              prefix='encoder_r_1',
                                               nin=options['dim_word'],
                                               dim=options['dim'])
+    for i in range(1,num_layers):
+        params = get_layer(options['encoder'])[0](options, params,
+                                                  prefix='encoder_r_'+str(i+1),
+                                                  nin=options['dim'],
+                                                  dim=options['dim'])
     ctxdim = 2 * options['dim']
 
     # init_state, init_cell
@@ -557,15 +569,22 @@ def build_model(tparams, options):
     # word embedding for forward rnn (source)
     emb = tparams['Wemb'][x.flatten()]
     emb = emb.reshape([n_timesteps, n_samples, options['dim_word']])
-    proj = get_layer(options['encoder'])[1](tparams, emb, options,
-                                            prefix='encoder',
-                                            mask=x_mask)
+
+    #multi-layer rnn
+    num_layers = 3
+    proj = [emb]
+    for i in range(num_layers):
+        proj = get_layer(options['encoder'])[1](tparams, proj[0], options,
+                                                prefix='encoder_'+str(i+1),
+                                                mask=x_mask)
     # word embedding for backward rnn (source)
     embr = tparams['Wemb'][xr.flatten()]
     embr = embr.reshape([n_timesteps, n_samples, options['dim_word']])
-    projr = get_layer(options['encoder'])[1](tparams, embr, options,
-                                             prefix='encoder_r',
-                                             mask=xr_mask)
+    projr = [embr]
+    for i in range(num_layers):
+        projr = get_layer(options['encoder'])[1](tparams, projr[0], options,
+                                                 prefix='encoder_r_'+str(i+1),
+                                                 mask=xr_mask)
 
     # context will be the concatenation of forward and backward rnns
     ctx = concatenate([proj[0], projr[0][::-1]], axis=proj[0].ndim-1)
@@ -646,10 +665,15 @@ def build_sampler(tparams, options, trng):
     embr = embr.reshape([n_timesteps, n_samples, options['dim_word']])
 
     # encoder
-    proj = get_layer(options['encoder'])[1](tparams, emb, options,
-                                            prefix='encoder')
-    projr = get_layer(options['encoder'])[1](tparams, embr, options,
-                                             prefix='encoder_r')
+    num_layers = 3
+    proj = [emb]
+    for i in range(num_layers):
+        proj = get_layer(options['encoder'])[1](tparams, emb, options,
+                                                prefix='encoder_'+str(i))
+    projr = [embr]
+    for i in range(num_layers):
+        projr = get_layer(options['encoder'])[1](tparams, embr, options,
+                                                 prefix='encoder_r_'+str(i))
 
     # concatenate forward and backward rnn hidden states
     ctx = concatenate([proj[0], projr[0][::-1]], axis=proj[0].ndim-1)
