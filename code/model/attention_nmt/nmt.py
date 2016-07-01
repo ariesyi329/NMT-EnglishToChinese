@@ -668,12 +668,12 @@ def build_sampler(tparams, options, trng):
     num_layers = 3
     proj = [emb]
     for i in range(num_layers):
-        proj = get_layer(options['encoder'])[1](tparams, emb, options,
-                                                prefix='encoder_'+str(i))
+        proj = get_layer(options['encoder'])[1](tparams, proj[0], options,
+                                                prefix='encoder_'+str(i+1))
     projr = [embr]
     for i in range(num_layers):
-        projr = get_layer(options['encoder'])[1](tparams, embr, options,
-                                                 prefix='encoder_r_'+str(i))
+        projr = get_layer(options['encoder'])[1](tparams, projr[0], options,
+                                                 prefix='encoder_r_'+str(i+1))
 
     # concatenate forward and backward rnn hidden states
     ctx = concatenate([proj[0], projr[0][::-1]], axis=proj[0].ndim-1)
