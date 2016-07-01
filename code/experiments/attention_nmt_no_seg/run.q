@@ -6,7 +6,7 @@
 #PBS -N no_seg
 #PBS -j oe
 
-cd ./NLUDR/NMT-EnglishToChinese/
+cd ./NMT/NMT-EnglishToChinese/
 
 module purge
 
