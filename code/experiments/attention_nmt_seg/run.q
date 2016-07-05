@@ -3,7 +3,7 @@
 #PBS -l nodes=1:ppn=1:gpus=1
 #PBS -l walltime=72:00:00
 #PBS -l mem=5GB
-#PBS -N default
+#PBS -N seg_single
 #PBS -j oe
 
 cd ./NMT/NMT-EnglishToChinese/

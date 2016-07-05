@@ -1,7 +1,7 @@
 import numpy
 import os
 
-from code.model.attention_nmt.nmt import train
+from code.model.attention_nmt.multi_nmt import train
 
 def main(job_id, params):
     print params
@@ -18,11 +18,11 @@ def main(job_id, params):
                                         maxlen=50,
                                         batch_size=32,
                                         valid_batch_size=32,
-					datasets=['/home/yl3068/NMT/NMT-EnglishToChinese/data/zh/no_seg/zh.train.no_seg.tok',
+					datasets=['/home/yl3068/NMT/NMT-EnglishToChinese/data/zh/rad/zh.train.rad.tok',
 					'/home/yl3068/NMT/NMT-EnglishToChinese/data/en/train.en.tok'],
-					valid_datasets=['/home/yl3068/NMT/NMT-EnglishToChinese/data/zh/no_seg/zh.dev.no_seg.tok',
+					valid_datasets=['/home/yl3068/NMT/NMT-EnglishToChinese/data/zh/rad/zh.dev.rad.tok',
 				        '/home/yl3068/NMT/NMT-EnglishToChinese/data/en/dev.en.tok'],
-					dictionaries=['/home/yl3068/NMT/NMT-EnglishToChinese/data/zh/no_seg/zh.train.no_seg.tok.pkl',
+					dictionaries=['/home/yl3068/NMT/NMT-EnglishToChinese/data/zh/rad/zh.train.rad.tok.pkl',
 					'/home/yl3068/NMT/NMT-EnglishToChinese/data/en/train.en.tok.pkl'],
                                         validFreq=5000,
                                         dispFreq=10,
@@ -33,7 +33,7 @@ def main(job_id, params):
 
 if __name__ == '__main__':
     main(0, {
-        'model': ['/home/yl3068/NMT/NMT-EnglishToChinese/code/experiments/attention_nmt_no_seg/model_single.npz'],
+        'model': ['/home/yl3068/NMT/NMT-EnglishToChinese/code/experiments/attention_nmt_rad/model_multi.npz'],
         'dim_word': [500],
         'dim': [1024],
         'n-words': [30000],

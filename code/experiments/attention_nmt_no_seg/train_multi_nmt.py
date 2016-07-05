@@ -1,7 +1,7 @@
 import numpy
 import os
 
-from code.model.attention_nmt.nmt import train
+from code.model.attention_nmt.multi_nmt import train
 
 def main(job_id, params):
     print params
@@ -33,7 +33,7 @@ def main(job_id, params):
 
 if __name__ == '__main__':
     main(0, {
-        'model': ['/home/yl3068/NMT/NMT-EnglishToChinese/code/experiments/attention_nmt_no_seg/model_single.npz'],
+        'model': ['/home/yl3068/NMT/NMT-EnglishToChinese/code/experiments/attention_nmt_no_seg/model_multi.npz'],
         'dim_word': [500],
         'dim': [1024],
         'n-words': [30000],
