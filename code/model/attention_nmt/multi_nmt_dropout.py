@@ -316,7 +316,7 @@ def gru_layer(tparams, state_below, options, prefix='gru', mask=None,
                                 n_steps=nsteps,
                                 profile=profile,
                                 strict=True)
-    rval = [rval]
+    rval = [rval] #why this?
     return rval
 
 
@@ -580,7 +580,8 @@ def build_model(tparams, options):
         #add dropout here
         if options['use_dropout_rnn']:
             if i+1 < num_layers:
-                proj = dropout_layer(proj, use_noise, trng)
+                proj = dropout_layer(proj[0], use_noise, trng)
+                proj = [proj]
     # word embedding for backward rnn (source)
     embr = tparams['Wemb'][xr.flatten()]
     embr = embr.reshape([n_timesteps, n_samples, options['dim_word']])
@@ -592,7 +593,8 @@ def build_model(tparams, options):
         #add dropout here
         if options['use_dropout_rnn']:
             if i+1 < num_layers:
-                projr = dropout_layer(projr, use_noise, trng)
+                projr = dropout_layer(projr[0], use_noise, trng)
+                projr = [projr]
 
     # context will be the concatenation of forward and backward rnns
     ctx = concatenate([proj[0], projr[0][::-1]], axis=proj[0].ndim-1)
